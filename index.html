@@ -339,21 +339,30 @@
     .gallery .section-label { color: var(--tussock-light); }
     .gallery .section-heading { color: var(--cream); }
     .gallery .section-desc { color: var(--stone-400); }
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
+    /* ── Carousel wrapper ── */
+    .carousel {
+      position: relative;
+      overflow: hidden;
+      margin: 0 -2rem; /* bleed to section edges */
+    }
+    .carousel-track {
+      display: flex;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
     }
     .gallery-item {
-      aspect-ratio: 1;
+      flex: 0 0 calc(60% - 1rem); /* show peek of next/prev */
+      max-width: 780px;
+      aspect-ratio: 4/3;
       background: var(--stone-700);
       position: relative; overflow: hidden;
-      cursor: pointer; transition: transform 0.3s;
+      cursor: pointer;
+      margin: 0 0.5rem;
+      transition: opacity 0.4s, transform 0.4s;
     }
-    .gallery-item:nth-child(1) {
-      grid-column: span 2; grid-row: span 2;
-      aspect-ratio: auto;
-    }
+    /* Dim non-active slides slightly */
+    .gallery-item:not(.active) { opacity: 0.55; transform: scale(0.97); }
+    .gallery-item.active { opacity: 1; transform: scale(1); }
     .gallery-item::after {
       content: attr(data-label);
       position: absolute; inset: 0;
@@ -367,15 +376,57 @@
       position: relative; z-index: 1;
       transition: transform 0.5s;
     }
-    .gallery-item:hover img { transform: scale(1.04); }
+    .gallery-item:hover img { transform: scale(1.03); }
     .gallery-item .overlay {
       position: absolute; inset: 0; z-index: 2;
-      background: linear-gradient(to top, rgba(28, 27, 23, 0.7), transparent 50%);
+      background: linear-gradient(to top, rgba(28, 27, 23, 0.75), transparent 55%);
       opacity: 0; transition: opacity 0.4s;
-      display: flex; align-items: flex-end; padding: 1.25rem;
+      display: flex; align-items: flex-end; padding: 1.5rem 2rem;
     }
-    .gallery-item:hover .overlay { opacity: 1; }
-    .overlay-text { font-size: 0.85rem; color: var(--cream); font-weight: 400; }
+    .gallery-item.active:hover .overlay { opacity: 1; }
+    .overlay-text { font-size: 0.9rem; color: var(--cream); font-weight: 400; letter-spacing: 0.02em; }
+
+    /* ── Nav arrows ── */
+    .carousel-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .carousel-btn {
+      width: 48px; height: 48px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.07);
+      color: var(--cream);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.3s, border-color 0.3s, transform 0.2s;
+      flex-shrink: 0;
+    }
+    .carousel-btn:hover {
+      background: var(--tussock);
+      border-color: var(--tussock);
+      transform: scale(1.08);
+    }
+    .carousel-btn svg { width: 18px; height: 18px; }
+
+    /* ── Dot indicators ── */
+    .carousel-dots {
+      display: flex; gap: 0.5rem;
+    }
+    .carousel-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--stone-600);
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .carousel-dot.active {
+      background: var(--tussock-light);
+      transform: scale(1.4);
+    }
 
 
     /*
@@ -529,8 +580,8 @@
       .nav-links a { font-size: 1.1rem; }
       .about-grid { grid-template-columns: 1fr; gap: 2rem; }
       .about-image { max-height: 350px; }
-      .gallery-grid { grid-template-columns: 1fr 1fr; }
-      .gallery-item:nth-child(1) { grid-column: span 2; aspect-ratio: 16/9; }
+      .gallery-item { flex: 0 0 85%; }
+      .gallery-item:not(.active) { opacity: 0.4; }
       .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
       .form-row { grid-template-columns: 1fr; }
       section { padding: 4rem 1.25rem; }
@@ -597,15 +648,15 @@
           Example: <img src="images/dad-at-work.jpg" alt="Art Install CHCH at work">
         -->
         <div class="about-image reveal">
-          <!-- <img src="images/about.jpg" alt="Art Install CHCH at work"> -->
+          <img src="images/about.jpg" alt="Art Install CHCH at work">
         </div>
 
         <div class="about-text reveal">
           <div class="section-label">About</div>
           <h2>Taking the stress out of hanging</h2>
-          <p>Whether it's a single treasured piece or an entire gallery wall, we make sure your art is hung securely, level, and exactly where it looks best.</p>
-          <p>Based in Christchurch, we bring the right tools, hardware, and experience to every job — so you don't have to worry about finding studs, patching mistakes, or ending up with crooked frames.</p>
-          <p>From family photos to large-scale artworks, mirrors to floating shelves — if it goes on a wall, we'll get it right.</p>
+          <p>Whether it's a single treasured piece or an entire gallery wall, we make sure your pictures are hung securely, level, and exactly where they look best.</p>
+          <p>Based in Christchurch, we bring the right tools, hardware, and experience to every job so you don't have to worry about finding studs, patching mistakes, or ending up with wonky pictures.</p>
+          <p>From family photos to large-scale artworks, mirrors to floating shelves; if it goes on a wall, we'll get it right.</p>
         </div>
       </div>
     </div>
@@ -626,7 +677,7 @@
             <rect x="3" y="3" width="18" height="18" rx="1"/><rect x="6" y="6" width="12" height="12"/>
           </svg>
           <h3>Picture Hanging</h3>
-          <p>Single pieces, pairs, or arrangements — hung level, secure, and at the perfect height for your space.</p>
+          <p>Single pictures, pairs, or arrangements — level, secure, and at the perfect height.</p>
         </div>
 
         <!-- Service 2 -->
@@ -636,7 +687,7 @@
             <rect x="5" y="14" width="14" height="7" rx="1"/>
           </svg>
           <h3>Gallery Walls</h3>
-          <p>Curated multi-piece layouts designed and installed with consistent spacing and visual balance.</p>
+          <p>Curated multi-piece layouts designed with thoughtful consideration and installed with visual balance.</p>
         </div>
 
         <!-- Service 3 -->
@@ -654,7 +705,7 @@
             <path d="M3 8h18M3 16h18"/><path d="M3 8v8M21 8v8"/>
           </svg>
           <h3>Shelving &amp; More</h3>
-          <p>Floating shelves, wall-mounted TVs, and other items that need precise, secure installation.</p>
+          <p>We can create custom floating shelves, install all types of mounted TVs, customise hanging rails, and many other items that require a one-off precise, secure solution.</p>
         </div>
       </div>
     </div>
@@ -683,9 +734,10 @@
       <h2 class="section-heading reveal">Recent Installations</h2>
       <p class="section-desc reveal">A selection of picture hanging and installation work across Christchurch homes and businesses.</p>
 
-      <div class="gallery-grid reveal">
-        <!-- Gallery item 1 (large — spans two columns) -->
-        <div class="gallery-item" data-label="YOUR PHOTO — replace this placeholder">
+      <div class="carousel reveal" id="galleryCarousel">
+        <div class="carousel-track" id="carouselTrack">
+        <!-- Gallery item 1 -->
+        <div class="gallery-item active" data-label="YOUR PHOTO — replace this placeholder">
           <!-- <img src="images/gallery-1.jpg" alt="Gallery wall installation"> -->
           <div class="overlay"><span class="overlay-text">Gallery Wall — Merivale</span></div>
         </div>
@@ -713,6 +765,18 @@
           <!-- <img src="images/gallery-5.jpg" alt="Office art installation"> -->
           <div class="overlay"><span class="overlay-text">Office Install — CBD</span></div>
         </div>
+        </div><!-- end .carousel-track -->
+      </div>
+
+      <!-- Carousel controls -->
+      <div class="carousel-controls">
+        <button class="carousel-btn" id="carouselPrev" aria-label="Previous">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="carousel-dots" id="carouselDots"></div>
+        <button class="carousel-btn" id="carouselNext" aria-label="Next">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
       </div>
     </div>
   </section>
@@ -741,7 +805,7 @@
           -->
           <div class="contact-detail">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l9 6 9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
-            <span><a href="mailto:hello@artinstallchch.nz">hello@artinstallchch.nz</a></span>
+            <span><a href="/cdn-cgi/l/email-protection#3f575a5353507f5e4d4b56514c4b5e53535c575c57115145"><span class="__cf_email__" data-cfemail="f69e939a9a99b69784829f988582979a9a959e959ed8988c">[email&#160;protected]</span></a></span>
           </div>
           <div class="contact-detail">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -770,7 +834,7 @@
                 method="POST">
 
             <!-- Web3Forms access key (replace with yours) -->
-            <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+            <input type="hidden" name="access_key" value="a74ad4cd-bc24-41af-b12e-ce21acae55e9">
 
             <!--
               SPAM PROTECTION — Honeypot field
@@ -833,7 +897,54 @@
     ║  You shouldn't need to change anything here.                     ║
     ╚══════════════════════════════════════════════════════════════════╝
   -->
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // ── Gallery Carousel ──
+    (function () {
+      const track   = document.getElementById('carouselTrack');
+      const items   = Array.from(track.querySelectorAll('.gallery-item'));
+      const dotsEl  = document.getElementById('carouselDots');
+      const prevBtn = document.getElementById('carouselPrev');
+      const nextBtn = document.getElementById('carouselNext');
+      let current = 0;
+
+      // Build dots
+      items.forEach((_, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+        dot.addEventListener('click', () => goTo(i));
+        dotsEl.appendChild(dot);
+      });
+
+      function goTo(index) {
+        items[current].classList.remove('active');
+        dotsEl.children[current].classList.remove('active');
+        current = (index + items.length) % items.length;
+        items[current].classList.add('active');
+        dotsEl.children[current].classList.add('active');
+
+        // Centre the active item in the carousel
+        const carousel = document.getElementById('galleryCarousel');
+        const itemW = items[0].offsetWidth + 8; // width + gap (0.5rem * 2)
+        const offset = current * itemW - (carousel.offsetWidth - itemW) / 2;
+        track.style.transform = `translateX(${-Math.max(0, offset)}px)`;
+      }
+
+      prevBtn.addEventListener('click', () => goTo(current - 1));
+      nextBtn.addEventListener('click', () => goTo(current + 1));
+
+      // Swipe support
+      let startX = 0;
+      track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+      track.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 40) goTo(current + (dx < 0 ? 1 : -1));
+      });
+
+      // Recalculate on resize
+      window.addEventListener('resize', () => goTo(current));
+    })();
+
     // ── Nav background on scroll ──
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
