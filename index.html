@@ -35,6 +35,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 
+  <!-- Scroll to top on page load — prevents browsers/search engines landing on #about -->
+  <script>
+    if (window.location.hash === '#about' || window.location.hash === '') {
+      history.replaceState(null, '', window.location.pathname);
+      window.scrollTo(0, 0);
+    }
+  </script>
+
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-8M5EQZFSHE"></script>
   <script>
@@ -1024,6 +1032,12 @@
     ╚══════════════════════════════════════════════════════════════════╝
   -->
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // ── Scroll to top on load (prevents landing on #about from search engines) ──
+    if (!window.location.hash || window.location.hash === '#about') {
+      history.replaceState(null, '', window.location.pathname);
+      window.scrollTo(0, 0);
+    }
+
     // ── Gallery Carousel ──
     (function () {
       const track   = document.getElementById('carouselTrack');
