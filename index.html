@@ -1143,6 +1143,8 @@
           form.style.display = 'none';
           success.classList.add('visible');
           form.reset();
+          // Google Ads conversion tracking — fires only on successful form submission
+          gtag('event', 'ads_conversion_Contact_1');
         } else {
           submitBtn.textContent = 'Something went wrong — try again';
           submitBtn.disabled = false;
